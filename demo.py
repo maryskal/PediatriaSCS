@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 
 protocolo_json = {
     'start':{
@@ -84,7 +85,8 @@ def funcion_protocolo(respuestas = [], nodo_name= "start", protocolo_json=protoc
                 pregunta,
                 ['none'] + list(form.get(pregunta))
             ))
-        st.write(preg)
-        st.write(rspss)
+
+        resultados = pd.DataFrame(rspss, preg)
+        st.write(resultados)
 
 funcion_protocolo(respuestas = [], nodo_name="start", protocolo_json=protocolo_json)
