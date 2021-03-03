@@ -1,75 +1,61 @@
 import streamlit as st
+
 protocolo_json = {
     'start':{
         'padre':"",
-        "tipo":"pregunta",
-        "pregunta": "¿Sintoma principal?",
+        "tipo": "pregunta",
+        "pregunta": "Sintoma principal",
         'respuestas': {
-            "Tengo fiebre": "fiebre",
-            "Dolor abdominal": "abdominal"
+            "Fiebre": "fiebre",
+            "Dolor abdominal": "abdominal",
+            "Dolor de cabeza": "cefalea",
+            "Tos y mocos": "catarro",
+            "Diarrea": "diarrea",
+            "Vómitos": "vomitos"
         },
     },
+
     'fiebre': {
         'padre': "start",
         "tipo": "formulario"
     },
-    'cabeza':{
-        'padre':"start",
-        "tipo":"pregunta",
-        "pregunta": "¿Te mareas al levantarte rapido?",
-        'respuestas': {
-            "Si": "mareo_si",
-            "No": "mareo_no"
-        },
-    },
-    'hombro': {
+
+    'abdominal': {
         'padre': "start",
-        "tipo": "pregunta",
-        "pregunta": "¿Que parte del cuerpo te duele?",
-        'respuestas': {
-            "cabeza": "cabeza",
-            "hombro": "hombro",
-            "pie": "pie",
-            "piel": "piel"
-        },
+        "tipo": "formulario"
     },
-    'pie': {
+
+    'cefalea': {
         'padre': "start",
-        "tipo": "pregunta",
-        "pregunta": "¿Que parte del cuerpo te duele?",
-        'respuestas': {
-            "cabeza": "cabeza",
-            "hombro": "hombro",
-            "pie": "pie",
-            "piel": "piel"
-        },
+        "tipo": "formulario"
     },
-    'piel': {
+
+    'catarro': {
         'padre': "start",
-        "tipo": "foto"
+        "tipo": "formulario"
     },
-    'mareo_si': {
+
+    'diarrea': {
         'padre': "start",
-        "tipo": "foto"
+        "tipo": "formulario"
     },
-    'mareo_no': {
+
+    'vomitos': {
         'padre': "start",
-        "tipo": "foto"
-    },
-    'final':{
-        'tipo':'final'
+        "tipo": "formulario"
     }
+
 }
 
 formularios = {
     'fiebre':{
-        'Tiempo de fiebre':['1d', '2d'],
+        'Tiempo de fiebre': ['1d', '2d'],
         'Temperatura maxima': ['38','39','40'],
         'Mocos y tos':['si', 'no'],
         'Vomitos':['si', 'no']
     }
 }
-def funcion_protocolo(respuestas = [], nodo_name="start", protocolo_json=protocolo_json):
+def funcion_protocolo(respuestas = [], nodo_name= "start", protocolo_json=protocolo_json):
     nodo = protocolo_json.get(nodo_name)
     tipo = nodo.get('tipo')
     if tipo == "pregunta":
@@ -80,20 +66,25 @@ def funcion_protocolo(respuestas = [], nodo_name="start", protocolo_json=protoco
         if respuestas[len(respuestas) - 1] != 'none':
             st.write()
             funcion_protocolo(respuestas, nodo_name=nodo.get("respuestas").get(respuestas[len(respuestas) - 1]), protocolo_json=protocolo_json)
+
     elif tipo == 'foto':
         st.write('Sube la foto XX')
         funcion_protocolo(respuestas + ['Se ha subido la foto'], nodo_name='final', protocolo_json=protocolo_json)
+
     elif tipo == 'final':
         st.write('Con esta informacion se recomienda que')
+
     elif tipo == 'formulario':
         form = formularios.get(nodo_name)
         rspss = list()
+        preg = list()
         for pregunta in form.keys():
-                rspss.append(st.selectbox(
-                    pregunta,
-                    ['none'] + list(form.get(pregunta))
-                )
-            )
+            preg.append(pregunta)
+            rspss.append(st.selectbox(
+                pregunta,
+                ['none'] + list(form.get(pregunta))
+            ))
+        st.write(preg)
         st.write(rspss)
 
 funcion_protocolo(respuestas = [], nodo_name="start", protocolo_json=protocolo_json)
