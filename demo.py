@@ -8,7 +8,7 @@ protocolo_json = {
         "pregunta": "Sintoma principal",
         'respuestas': {
             "Fiebre": "fiebre",
-            "Dolor abdominal": "abdominal",
+            "Masa en el cuello": "masa cervical",
             "Dolor de cabeza": "cefalea",
             "Tos y mocos": "catarro",
             "Diarrea": "diarrea",
@@ -21,7 +21,7 @@ protocolo_json = {
         "tipo": "formulario"
     },
 
-    'abdominal': {
+    'masa cervical': {
         'padre': "start",
         "tipo": "formulario"
     },
@@ -50,11 +50,25 @@ protocolo_json = {
 
 antecedentes = {
     'primarios':{
-        'Fue prematuro': 'prematuridad',
-        'Lactante (< 2 años)': 'lactante',
-        'Tiene dermatitis atópica': 'dermatitis atopica',
-        'El padre o la madre tuvieron o tienen asma o alergias': 'AF atopia'
-}
+        'checkbox':{
+            'Fue prematuro': 'prematuridad',
+            'Lactante (< 2 años)': 'lactante',
+            'Tiene dermatitis atópica': 'dermatitis atopica',
+            'El padre o la madre tuvieron o tienen asma o alergias': 'AF atopia',
+            'Presenta alguna alergia': 'alergias',
+            'Tiene el calendario vacunal al día o casi al día': 'vacunas',
+            'Presenta una enfermedad crónica': 'Enfermedades',
+            'Tiene tratamiento de base': 'tto_base'
+
+        },
+        'selectbox':{
+            'Episodios de bronquiolitis/broncoespasmo': ['No',
+                                                         'Un único episodio de bronquiolitis',
+                                                         'Más de un episodio de bronquiolitis',
+                                                         'Más de un episodio y ha precisado inahaladores',
+                                                         'Más de un episodio y tiene tratamiento diario'],
+        }
+    }
 }
 
 formularios = {
@@ -74,6 +88,40 @@ formularios = {
         'Temperatura maxima (ºC)': [35.0,42.0,0.1]
         }
 
+    },
+
+
+    'masa cervical': {
+        'checkbox': {
+            'Es dolorosa': 'dolor',
+            'Crece rápido': 'crecimiento rapido',
+            'Es dura': 'dura',
+            'Se mueve con facilidad': 'no adherida',
+            'Se mueve al sacar la lengua o aguantar la respiración': 'desplaza con valsalva',
+            'Duele al masticar' : 'dolor al comer',
+            'Tiene la boca seca': 'sequedad de boca',
+            'Ha presentado lo mismo otras veces': 'episodios previos',
+            'Fiebre': 'fiebre',
+            'Ha perdido peso': 'perdida de peso',
+            'Suda por las noches': 'sudoracion nocturna',
+            'Dificultad para respirar': 'disnea',
+            'Dolor al tragar': 'odinofagia',
+            'Perdida de oido': 'pérdida audición',
+            'Está afónico': 'afonía',
+            'Vómitos': 'vómitos',
+            'Ojos salidos hacia fuera': 'exoftalmos',
+            'Secreción por la nariz': 'secrecion nasal',
+            'Madre con Enf. Graves': 'AF de Graves'
+        },
+
+        'selectbox': {
+            'Localización': ['Ángulo de la mandibula', 'Zona media superior',
+                             'Zona media inferior', 'Triángulo anterior',
+                             'Triángulo posterior', 'Esternocleidomastoideo'],
+            'Ha recibido medicación': ['No', 'Si, Litio', 'Si, anticolinérgicos',
+                                       'Si, antihistamínicos', 'Si, yoduros', 'Si, amiodarona',
+                                       'Si, varios de los anteriores']
+        }
     }
 }
 
@@ -126,58 +174,20 @@ def checkbox(json, nodo_name):
 
     # Recorro todas las preguntas
     for pregunta in preguntas_check.keys():
-        # Recogemos valores máximo y minimo para el rango
-        max_min = list(preguntas_check.get(pregunta))
-        preg.append(pregunta)
+        preg.append(preguntas_check.get(pregunta))
         rspss.append(st.checkbox(pregunta))
     resultados = pd.DataFrame(rspss, preg)
     return resultados
 
 
-def antecedente():
-    st.write('Rellena tus antecedentes')
 
-    prematuridad = st.checkbox('Ha sido prematuro')
-
-    lactante = st.checkbox('Lactante (< 2 años)')
-
-
-    # Edad
-    if lactante:
-        edad = st.slider('Meses', 0, 24)
-    else:
-        edad = st.slider('Años', 2, 18)
-
-        # Asma y atopia
-    dermatitis_atopica = st.checkbox('Presenta dermatitis atopica')
-    af_atopia = st.checkbox('El padre o la madre tuvieron o tienen asma o alergias')
-    sibilantes = st.checkbox('Alguna vez ha tenido bronquiolitis/asma o ha necesitado inhaladores')
-
-    tto_base_asma = False
-    if sibilantes:
-        tto_base_asma = st.checkbox('Tiene tratamiento de base (toma inhaladores todos los días)')
-    if tto_base_asma:
-        que_tto_asma = st.text_input('Que inhalador')
-
-    alergias = st.checkbox('Tiene alergias')
-    if alergias:
-        que_alergias = st.multiselect('A que tiene alergias',
-                                      ['Alimentos', 'Polen', 'Polvo', 'Animales', 'Medicamentos', 'Otros'])
-
-    vacunas = st.checkbox('Tiene las vacunas al día')
-
-    enfermedades = st.checkbox('Tiene una enfermedad crónica')
-
-    if enfermedades:
-        que_enfermedad = st.text_input('Que enfermedad presenta')
-
-    otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
 
 
 #FUNCIONES PRINCIPALES
 def inicio(respuestas = [], protocolo_json=protocolo_json):
     nodo = protocolo_json.get('start')
 
+    #ANTECEDENTES
     antecedente()
 
     #SÍNTOMAS GUIA
@@ -190,6 +200,29 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
 
     st.write('¿Quieres añadir una foto?')
     #Añadir funcion de subir foto
+
+
+def antecedente():
+    st.write('Rellena tus antecedentes')
+
+    respuestas = checkbox(antecedentes, 'primarios')
+    respuestas = pd.concat([respuestas, selectbox(antecedentes, 'primarios')],axis=0)
+
+    lactante = respuestas.iat[1,0]
+    # Edad
+    if lactante:
+        edad = st.slider('Edad (Meses)', 0, 24)
+    else:
+        edad = st.slider('Edad (Años)', 2, 18)
+
+    enfermedades_cronicas = respuestas.iat[6,0]
+    if enfermedades_cronicas:
+       que_enfermedades = st.text_input('Describe sus enfermedades')
+
+    otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
+
+    #Faltaría de recoger en el dataFrame la edad y las enfermedades y otros antecedentes
+    st.write(respuestas)
 
 
 
