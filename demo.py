@@ -48,6 +48,7 @@ protocolo_json = {
 
 }
 
+
 formularios = {
     'fiebre':{
         'checkbox': {
@@ -69,28 +70,14 @@ formularios = {
 }
 
 
-def funcion_protocolo(respuestas = [], nodo_name= "start", protocolo_json=protocolo_json):
-    nodo = protocolo_json.get(nodo_name)
-    tipo = nodo.get('tipo')
-
-    if tipo == "pregunta":
-        respuestas = respuestas + [st.selectbox(
-            nodo.get("pregunta"),
-            ['none'] + list(nodo.get("respuestas").keys())
-        )]
-        if respuestas[len(respuestas) - 1] != 'none':
-            st.write()
-            funcion_protocolo(respuestas, nodo_name=nodo.get("respuestas").get(respuestas[len(respuestas) - 1]), protocolo_json=protocolo_json)
-
-    elif tipo == 'foto':
-        st.write('Sube la foto XX')
-        funcion_protocolo(respuestas + ['Se ha subido la foto'], nodo_name='final', protocolo_json=protocolo_json)
-
-    elif tipo == 'formulario':
-        formulario(nodo_name)
+class antecedentes:
+    nombre = ''
+    booleano = False
+    especificacion = ''
+    comentario = ''
 
 
-
+#FUNCIONES PARA LA RECOGIDA DE VALORES
 def numerico (nodo_name):
     sintoma_guia = formularios.get(nodo_name)
     preguntas_numericas = sintoma_guia.get('num')
@@ -142,8 +129,66 @@ def checkbox(nodo_name):
     return resultados
 
 
-def formulario (nodo_name):
+def antecedente():
+    st.write('Rellena tus antecedentes')
 
+    prematuridad =  st.checkbox('Ha sido prematuro')
+
+    lactante = st.checkbox('Lactante (< 2 años)')
+
+
+    # Edad
+    if lactante:
+        edad = st.slider('Meses', 0, 24)
+    else:
+        edad = st.slider('Años', 2, 18)
+
+        # Asma y atopia
+    dermatitis_atopica = st.checkbox('Presenta dermatitis atopica')
+    af_atopia = st.checkbox('El padre o la madre tuvieron o tienen asma o alergias')
+    sibilantes = st.checkbox('Alguna vez ha tenido bronquiolitis/asma o ha necesitado inhaladores')
+
+    tto_base_asma = False
+    if sibilantes:
+        tto_base_asma = st.checkbox('Tiene tratamiento de base (toma inhaladores todos los días)')
+    if tto_base_asma:
+        que_tto_asma = st.text_input('Que inhalador')
+
+    alergias = st.checkbox('Tiene alergias')
+    if alergias:
+        que_alergias = st.multiselect('A que tiene alergias',
+                                      ['Alimentos', 'Polen', 'Polvo', 'Animales', 'Medicamentos', 'Otros'])
+
+    vacunas = st.checkbox('Tiene las vacunas al día')
+
+    enfermedades = st.checkbox('Tiene una enfermedad crónica')
+
+    if enfermedades:
+        que_enfermedad = st.text_input('Que enfermedad presenta')
+
+    otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
+
+
+#FUNCIONES PRINCIPALES
+def inicio(respuestas = [], protocolo_json=protocolo_json):
+    nodo = protocolo_json.get('start')
+
+    antecedente()
+
+    #SÍNTOMAS GUIA
+    st.write()
+    respuestas = respuestas + [st.selectbox(nodo.get("pregunta"), ['none'] + list(nodo.get("respuestas").keys()))]
+
+    if respuestas[len(respuestas) - 1] != 'none':
+        st.write()
+        formulario(nodo.get("respuestas").get(respuestas[len(respuestas) - 1]))
+
+    st.write('¿Quieres añadir una foto?')
+    #Añadir funcion de subir foto
+
+
+
+def formulario (nodo_name):
     st.write('Responda a las siguientes cuestiones')
     st.write()
 
@@ -168,7 +213,10 @@ def formulario (nodo_name):
         elif (tipo_pregunta == 'num'):
             resultados = pd.concat([resultados, numerico(nodo_name)], axis=0)
 
+    comentario = st.text_input('¿Quieres añadir más información?')
     st.write(resultados)
+    st.write(comentario)
 
 
-funcion_protocolo(respuestas = [], nodo_name="start", protocolo_json=protocolo_json)
+
+inicio(respuestas = [], protocolo_json=protocolo_json)
