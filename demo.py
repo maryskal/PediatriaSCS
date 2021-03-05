@@ -8,11 +8,7 @@ protocolo_json = {
         "pregunta": "Sintoma principal",
         'respuestas': {
             "Fiebre": "fiebre",
-            "Masa en el cuello": "masa cervical",
-            "Dolor de cabeza": "cefalea",
-            "Tos y mocos": "catarro",
-            "Diarrea": "diarrea",
-            "Vómitos": "vomitos"
+            "Masa en el cuello": "masa cervical"
         },
     },
 
@@ -22,26 +18,6 @@ protocolo_json = {
     },
 
     'masa cervical': {
-        'padre': "start",
-        "tipo": "formulario"
-    },
-
-    'cefalea': {
-        'padre': "start",
-        "tipo": "formulario"
-    },
-
-    'catarro': {
-        'padre': "start",
-        "tipo": "formulario"
-    },
-
-    'diarrea': {
-        'padre': "start",
-        "tipo": "formulario"
-    },
-
-    'vomitos': {
         'padre': "start",
         "tipo": "formulario"
     }
@@ -156,8 +132,6 @@ def selectbox(json, nodo_name):
 
     # Recorro todas las preguntas
     for pregunta in preguntas_select.keys():
-        # Recogemos valores máximo y minimo para el rango
-        max_min = list(preguntas_select.get(pregunta))
         preg.append(pregunta)
         rspss.append(st.selectbox(
             pregunta, list(preguntas_select.get(pregunta))))
