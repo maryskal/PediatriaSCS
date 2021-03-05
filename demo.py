@@ -48,12 +48,20 @@ protocolo_json = {
 
 }
 
+antecedentes = {
+    'primarios':{
+        'Fue prematuro': 'prematuridad',
+        'Lactante (< 2 años)': 'lactante',
+        'Tiene dermatitis atópica': 'dermatitis atopica',
+        'El padre o la madre tuvieron o tienen asma o alergias': 'AF atopia'
+}
+}
 
 formularios = {
     'fiebre':{
         'checkbox': {
-            'Diarrea': 'diarrea',
-            'Mocos y tos': 'catarro',
+            'Diarrea': 'Diarrea',
+            'Mocos y tos': 'Mocos y tos',
         },
 
         'selectbox':{
@@ -70,16 +78,11 @@ formularios = {
 }
 
 
-class antecedentes:
-    nombre = ''
-    booleano = False
-    especificacion = ''
-    comentario = ''
 
 
 #FUNCIONES PARA LA RECOGIDA DE VALORES
-def numerico (nodo_name):
-    sintoma_guia = formularios.get(nodo_name)
+def numerico (json, nodo_name):
+    sintoma_guia = json.get(nodo_name)
     preguntas_numericas = sintoma_guia.get('num')
 
     rspss = list()
@@ -95,8 +98,9 @@ def numerico (nodo_name):
     resultados = pd.DataFrame(rspss, preg)
     return resultados
 
-def selectbox(nodo_name):
-    sintoma_guia = formularios.get(nodo_name)
+
+def selectbox(json, nodo_name):
+    sintoma_guia = json.get(nodo_name)
     preguntas_select = sintoma_guia.get('selectbox')
 
     rspss = list()
@@ -112,8 +116,9 @@ def selectbox(nodo_name):
     resultados = pd.DataFrame(rspss, preg)
     return resultados
 
-def checkbox(nodo_name):
-    sintoma_guia = formularios.get(nodo_name)
+
+def checkbox(json, nodo_name):
+    sintoma_guia = json.get(nodo_name)
     preguntas_check = sintoma_guia.get('checkbox')
 
     rspss = list()
@@ -132,7 +137,7 @@ def checkbox(nodo_name):
 def antecedente():
     st.write('Rellena tus antecedentes')
 
-    prematuridad =  st.checkbox('Ha sido prematuro')
+    prematuridad = st.checkbox('Ha sido prematuro')
 
     lactante = st.checkbox('Lactante (< 2 años)')
 
@@ -203,15 +208,15 @@ def formulario (nodo_name):
 
         #Si tipo bool
         if (tipo_pregunta == 'checkbox'):
-            resultados = pd.concat([resultados, checkbox(nodo_name)], axis=0)
+            resultados = pd.concat([resultados, checkbox(formularios, nodo_name)], axis=0)
 
         # Si tipo selectbox
         elif (tipo_pregunta == 'selectbox'):
-            resultados = pd.concat([resultados, selectbox(nodo_name)], axis=0)
+            resultados = pd.concat([resultados, selectbox(formularios, nodo_name)], axis=0)
 
         # Si tipo numerico
         elif (tipo_pregunta == 'num'):
-            resultados = pd.concat([resultados, numerico(nodo_name)], axis=0)
+            resultados = pd.concat([resultados, numerico(formularios, nodo_name)], axis=0)
 
     comentario = st.text_input('¿Quieres añadir más información?')
     st.write(resultados)
