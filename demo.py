@@ -5,7 +5,7 @@ protocolo_json = {
     'start':{
         'padre':"",
         "tipo": "pregunta",
-        "pregunta": "Sintoma principal",
+        "pregunta": "¿Que te sucede?",
         'respuestas': {
             "Fiebre": "fiebre",
             "Masa en el cuello": "masa cervical"
@@ -162,12 +162,13 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
     nodo = protocolo_json.get('start')
 
     #ANTECEDENTES
+    st.title('ANTECEDENTES')
     antecedente()
 
     #SÍNTOMAS GUIA
     st.write()
+    st.title('SÍNTOMA PRINCIPAL')
     respuestas = respuestas + [st.selectbox(nodo.get("pregunta"), ['none'] + list(nodo.get("respuestas").keys()))]
-
     if respuestas[len(respuestas) - 1] != 'none':
         st.write()
         formulario(nodo.get("respuestas").get(respuestas[len(respuestas) - 1]))
@@ -179,7 +180,8 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
 def antecedente():
     st.write('Rellena tus antecedentes')
 
-    respuestas = checkbox(antecedentes, 'primarios')
+    respuestas = pd.DataFrame()
+    respuestas = pd.concat([respuestas, checkbox(antecedentes, 'primarios')], axis= 0)
     respuestas = pd.concat([respuestas, selectbox(antecedentes, 'primarios')],axis=0)
 
     lactante = respuestas.iat[1,0]
@@ -190,18 +192,27 @@ def antecedente():
         edad = st.slider('Edad (Años)', 2, 18)
 
     enfermedades_cronicas = respuestas.iat[6,0]
+    que_enfermedades = ''
     if enfermedades_cronicas:
        que_enfermedades = st.text_input('Describe sus enfermedades')
 
+    tto_base = respuestas.iat[7,0]
+    que_tto_base = ''
+    if tto_base:
+        que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
+
     otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
 
-    #Faltaría de recoger en el dataFrame la edad y las enfermedades y otros antecedentes
-    st.write(respuestas)
+    lista_items = ['edad', 'que enfermedades', 'que tto de base', 'otros antecedentes']
+    lista_respuestas = [edad, que_enfermedades, que_tto_base, otros_antecedentes]
+    df = pd.DataFrame(lista_respuestas, lista_items)
 
+    respuestas = pd.concat([respuestas, df], axis=0)
+    st.dataframe(respuestas)
 
 
 def formulario (nodo_name):
-    st.write('Responda a las siguientes cuestiones')
+    st.subheader('Responda a las siguientes cuestiones')
     st.write()
 
     sintoma_guia = formularios.get(nodo_name)
