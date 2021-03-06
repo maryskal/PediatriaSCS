@@ -49,5 +49,27 @@
                                        "Si, antihistaminicos", "Si, yoduros", "Si, amiodarona",
                                        "Si, varios de los anteriores"]
         }
+    },
+    "antecedentes":{
+        "checkbox":{
+            "Fue prematuro": "prematuridad",
+            "Lactante (< 24 meses)": "lactante",
+            "Tiene dermatitis atopica": "dermatitis atopica",
+            "El padre o la madre tuvieron o tienen asma o alergias": "AF atopia",
+            "Presenta alguna alergia": "alergias",
+            "Tiene el calendario vacunal al dia o casi al dia": "vacunas",
+            "Presenta una enfermedad cronica": "enfermedades",
+            "Tiene tratamiento de base": "tto base"
+
+        },
+        "selectbox":{
+            "Episodios de bronquiolitis/broncoespasmo": ["No",
+                                                         "Un unico episodio de bronquiolitis",
+                                                         "Mas de un episodio de bronquiolitis",
+                                                         "Mas de un episodio y ha precisado inahaladores",
+                                                         "Mas de un episodio y tiene tratamiento diario"]
+        }
     }
 }
+
+

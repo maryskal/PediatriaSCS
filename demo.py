@@ -6,9 +6,6 @@ import json as js
 with open('protocolo_json.json') as file:
     protocolo_json = js.load(file)
 
-with open('antecedentes.json') as file:
-    antecedentes = js.load(file)
-
 with open('formularios.json') as file:
     formularios = js.load(file)
 
@@ -112,9 +109,9 @@ def antecedente():
     antecedentes_dic = {}
 
     #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(checkbox(antecedentes, 'primarios'))
+    antecedentes_dic.update(checkbox(formularios, 'antecedentes'))
     #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(selectbox(antecedentes, 'primarios'))
+    antecedentes_dic.update(selectbox(formularios, 'antecedentes'))
 
     #Se recoge como es la variable lactante del diccionario y según eso se pregunta la edad en meses o en años
     lactante = antecedentes_dic.get('lactante')
