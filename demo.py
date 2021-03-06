@@ -74,7 +74,7 @@ formularios = {
             'Crece rápido': 'crecimiento rapido',
             'Es dura': 'dura',
             'Se mueve con facilidad': 'no adherida',
-            'Se mueve al sacar la lengua o aguantar la respiración': 'desplaza con valsalva',
+            'Se mueve al sacar la lengua o aguantar la respiracion': 'desplaza con valsalva',
             'Duele al masticar' : 'dolor al comer',
             'Tiene la boca seca': 'sequedad de boca',
             'Ha presentado lo mismo otras veces': 'episodios previos',
@@ -83,8 +83,8 @@ formularios = {
             'Suda por las noches': 'sudoracion nocturna',
             'Dificultad para respirar': 'disnea',
             'Dolor al tragar': 'odinofagia',
-            'Perdida de oido': 'pérdida audición',
-            'Está afónico': 'afonía',
+            'Perdida de oido': 'pérdida audicion',
+            'Está afonico': 'afonia',
             'Vómitos': 'vómitos',
             'Ojos salidos hacia fuera': 'exoftalmos',
             'Secreción por la nariz': 'secrecion nasal',
@@ -92,11 +92,11 @@ formularios = {
         },
 
         'selectbox': {
-            'Localización': ['Ángulo de la mandibula', 'Zona media superior',
+            'Localizacion': ['Angulo de la mandibula', 'Zona media superior',
                              'Zona media inferior', 'Triángulo anterior',
                              'Triángulo posterior', 'Esternocleidomastoideo'],
-            'Ha recibido medicación': ['No', 'Si, Litio', 'Si, anticolinérgicos',
-                                       'Si, antihistamínicos', 'Si, yoduros', 'Si, amiodarona',
+            'Ha recibido medicacion': ['No', 'Si, Litio', 'Si, anticolinergicos',
+                                       'Si, antihistaminicos', 'Si, yoduros', 'Si, amiodarona',
                                        'Si, varios de los anteriores']
         }
     }
@@ -106,7 +106,7 @@ formularios = {
 
 
 #FUNCIONES PARA LA RECOGIDA DE VALORES
-def numerico (json, nodo_name):
+def numerico (json, nodo_name): #Se introduce un json y el nombre de un nodo
     sintoma_guia = json.get(nodo_name)
     preguntas_numericas = sintoma_guia.get('num')
 
@@ -121,7 +121,7 @@ def numerico (json, nodo_name):
         rspss.append(st.slider(
             pregunta, max_min_step[0], max_min_step[1], step = max_min_step[2]))
 
-    return crear_json('numerico', preg, rspss)
+    return crear_json('numerico', preg, rspss) #Esta función está definida más adelante
 
 
 
@@ -137,9 +137,8 @@ def selectbox(json, nodo_name):
         preg.append(pregunta)
         rspss.append(st.selectbox(
             pregunta, list(preguntas_select.get(pregunta))))
-    resultados = pd.DataFrame(rspss, preg)
 
-    return crear_json('selectbox', preg, rspss)
+    return crear_json('selectbox', preg, rspss) #Esta función está definida más adelante
 
 
 
@@ -154,9 +153,8 @@ def checkbox(json, nodo_name):
     for pregunta in preguntas_check.keys():
         preg.append(preguntas_check.get(pregunta))
         rspss.append(st.checkbox(pregunta))
-    resultados = pd.DataFrame(rspss, preg)
 
-    return crear_json('checkbox', preg, rspss)
+    return crear_json('checkbox', preg, rspss) #Esta función está definida más adelante
 
 
 #FUNCIONES PARA JSON
@@ -165,16 +163,16 @@ def crear_json(nombre, lista_1, lista_2):
     archivo = {}
     archivo[nombre] = []
 
+    #Se recorre la lista 1 y se introducen los datos según lista_1 : lista_2
     for i in range(len(lista_1)):
         archivo[nombre].append({lista_1[i]:lista_2[i]})
     return(archivo)
 
 
 #Crea un archivo json con el objeto json introducido
-def guardar_json (nombre, archivo_json):
-    with open(nombre, 'w') as file:
+def guardar_json (nombre_archivo, archivo_json):
+    with open(nombre_archivo, 'w') as file:
         js.dump(archivo_json, file, indent=4)
-        print('guardado')
 
 
 #Buscar resultado dentro de un json con estructura {[{}]}
@@ -212,9 +210,12 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
 def antecedente():
     st.write('Rellena tus antecedentes')
 
+    #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un json (ver funcion)
     check = checkbox(antecedentes, 'primarios')
+    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un json (ver funcion)
     select = selectbox(antecedentes, 'primarios')
 
+    #Se recoge como es la variable lactante del json y según eso se pregunta la edad en meses o en años
     lactante = buscar_resultado(check, 'checkbox', 'lactante')
     # Edad
     if lactante:
@@ -222,25 +223,31 @@ def antecedente():
     else:
         edad = st.slider('Edad (Años)', 2, 18)
 
+    #Se recoge como es la variable enfermedades del json y según eso se pregunta o no cuales son esas enfermedades
     enfermedades_cronicas = buscar_resultado(check, 'checkbox', 'enfermedades')
     que_enfermedades = ''
     if enfermedades_cronicas:
        que_enfermedades = st.text_input('Describe sus enfermedades')
 
+    #Se recoge como es la variable tto_base del json y según eso se pregunta o no cual es el tto
     tto_base = buscar_resultado(check, 'checkbox', 'tto base')
     que_tto_base = ''
     if tto_base:
         que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
 
+    #Texto libre para otros antecedentes
     otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
 
+    #Se crean dos listas con las nuevas preguntas y respuestas para crear un nuevo json
     lista_items = ['edad', 'que enfermedades', 'que tto de base', 'otros antecedentes']
     lista_respuestas = [edad, que_enfermedades, que_tto_base, otros_antecedentes]
     otros = crear_json('otros', lista_items, lista_respuestas)
 
-    res = {**check, **select, **otros}
-    st.write(res)
-    guardar_json('antecedentes', res)
+    #Se juntan todos los json generados (checkbox, selectbox y el resto)
+    antecedent = {**check, **select, **otros}
+    st.write(antecedent)
+    #Creamos un archivo json con el objeto json (ver funcion)
+    guardar_json('antecedentes', antecedent)
 
 
 
@@ -248,9 +255,10 @@ def formulario (nodo_name):
     st.subheader('Responda a las siguientes cuestiones')
     st.write()
 
+    #Se recoge el síntomam guia que se ha introducido desde inicio()
     sintoma_guia = formularios.get(nodo_name)
 
-    # Aqui se recogerán los resultados
+    #Los objetos json que recogen los resultados según el tipo de pregunta que sea (checkbox, selectbox o numerica)
     check = {}
     select = {}
     numero = {}
@@ -258,10 +266,10 @@ def formulario (nodo_name):
     # Según si es bool o numérico se hace una cosa u otra
     for tipo_pregunta in sintoma_guia.keys():
 
-        # Recogemos el tipo de pregunta
+        # Recogemos el tipo de pregunta y según el tipo usamos la función de muestra y recogida de datos correspondiente
         tipo = sintoma_guia.get(tipo_pregunta)
 
-        #Si tipo bool
+        #Si tipo checkbox
         if (tipo_pregunta == 'checkbox'):
             check = checkbox(formularios, nodo_name)
 
@@ -274,7 +282,8 @@ def formulario (nodo_name):
             numero = numerico(formularios, nodo_name)
 
     comentario = st.text_input('¿Quieres añadir más información?')
-    archivo = {**check, **select, **numero}
+    otros = crear_json('otros', ['mas informacion'], [comentario])
+    archivo = {**check, **select, **numero, **otros}
     st.write(archivo)
     guardar_json(nodo_name, archivo)
 
