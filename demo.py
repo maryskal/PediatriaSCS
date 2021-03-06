@@ -33,8 +33,8 @@ antecedentes = {
             'El padre o la madre tuvieron o tienen asma o alergias': 'AF atopia',
             'Presenta alguna alergia': 'alergias',
             'Tiene el calendario vacunal al día o casi al día': 'vacunas',
-            'Presenta una enfermedad crónica': 'Enfermedades',
-            'Tiene tratamiento de base': 'tto_base'
+            'Presenta una enfermedad crónica': 'enfermedades',
+            'Tiene tratamiento de base': 'tto base'
 
         },
         'selectbox':{
@@ -119,8 +119,9 @@ def numerico (json, nodo_name):
         preg.append(pregunta)
         rspss.append(st.slider(
             pregunta, max_min_step[0], max_min_step[1], step = max_min_step[2]))
-    resultados = pd.DataFrame(rspss, preg)
-    return resultados
+
+    return crear_json('numerico', preg, rspss)
+
 
 
 def selectbox(json, nodo_name):
@@ -136,7 +137,9 @@ def selectbox(json, nodo_name):
         rspss.append(st.selectbox(
             pregunta, list(preguntas_select.get(pregunta))))
     resultados = pd.DataFrame(rspss, preg)
-    return resultados
+
+    return crear_json('selectbox', preg, rspss)
+
 
 
 def checkbox(json, nodo_name):
@@ -151,9 +154,29 @@ def checkbox(json, nodo_name):
         preg.append(preguntas_check.get(pregunta))
         rspss.append(st.checkbox(pregunta))
     resultados = pd.DataFrame(rspss, preg)
-    return resultados
+
+    return crear_json('checkbox', preg, rspss)
 
 
+#Crear un archivo json con las respuestas
+def crear_json(nombre, lista_1, lista_2):
+    archivo = {}
+    archivo[nombre] = []
+
+    for i in range(len(lista_1)):
+        archivo[nombre].append({lista_1[i]:lista_2[i]})
+    return(archivo)
+
+
+
+#Buscar resultado dentro de un json con estructura {[{}]}
+def buscar_resultado(doc_json, nombre_grupo, nombre_pregunta):
+    grupo = doc_json.get(nombre_grupo)
+    for x in grupo:
+        r = x.get(nombre_pregunta)
+        if r != None:
+            respuesta = r
+    return respuesta
 
 
 
@@ -177,26 +200,26 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
     #Añadir funcion de subir foto
 
 
+
 def antecedente():
     st.write('Rellena tus antecedentes')
 
-    respuestas = pd.DataFrame()
-    respuestas = pd.concat([respuestas, checkbox(antecedentes, 'primarios')], axis= 0)
-    respuestas = pd.concat([respuestas, selectbox(antecedentes, 'primarios')],axis=0)
+    check = checkbox(antecedentes, 'primarios')
+    select = selectbox(antecedentes, 'primarios')
 
-    lactante = respuestas.iat[1,0]
+    lactante = buscar_resultado(check, 'checkbox', 'lactante')
     # Edad
     if lactante:
         edad = st.slider('Edad (Meses)', 0, 24)
     else:
         edad = st.slider('Edad (Años)', 2, 18)
 
-    enfermedades_cronicas = respuestas.iat[6,0]
+    enfermedades_cronicas = buscar_resultado(check, 'checkbox', 'enfermedades')
     que_enfermedades = ''
     if enfermedades_cronicas:
        que_enfermedades = st.text_input('Describe sus enfermedades')
 
-    tto_base = respuestas.iat[7,0]
+    tto_base = buscar_resultado(check, 'checkbox', 'tto base')
     que_tto_base = ''
     if tto_base:
         que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
@@ -205,10 +228,11 @@ def antecedente():
 
     lista_items = ['edad', 'que enfermedades', 'que tto de base', 'otros antecedentes']
     lista_respuestas = [edad, que_enfermedades, que_tto_base, otros_antecedentes]
-    df = pd.DataFrame(lista_respuestas, lista_items)
+    otros = crear_json('otros', lista_items, lista_respuestas)
 
-    respuestas = pd.concat([respuestas, df], axis=0)
-    st.dataframe(respuestas)
+    res = {**check, **select, **otros}
+    st.write(res)
+
 
 
 def formulario (nodo_name):
@@ -216,7 +240,11 @@ def formulario (nodo_name):
     st.write()
 
     sintoma_guia = formularios.get(nodo_name)
-    resultados = pd.DataFrame()
+
+    # Aqui se recogerán los resultados
+    check = {}
+    select = {}
+    numero = {}
 
     # Según si es bool o numérico se hace una cosa u otra
     for tipo_pregunta in sintoma_guia.keys():
@@ -226,19 +254,19 @@ def formulario (nodo_name):
 
         #Si tipo bool
         if (tipo_pregunta == 'checkbox'):
-            resultados = pd.concat([resultados, checkbox(formularios, nodo_name)], axis=0)
+            check = checkbox(formularios, nodo_name)
 
         # Si tipo selectbox
         elif (tipo_pregunta == 'selectbox'):
-            resultados = pd.concat([resultados, selectbox(formularios, nodo_name)], axis=0)
+            select = selectbox(formularios, nodo_name)
 
         # Si tipo numerico
         elif (tipo_pregunta == 'num'):
-            resultados = pd.concat([resultados, numerico(formularios, nodo_name)], axis=0)
+            numero = numerico(formularios, nodo_name)
 
     comentario = st.text_input('¿Quieres añadir más información?')
-    st.write(resultados)
-    st.write(comentario)
+    archivo = {**check, **select, **numero}
+    st.write(archivo)
 
 
 
