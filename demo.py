@@ -40,7 +40,7 @@ antecedentes = {
         },
         'selectbox':{
             'Episodios de bronquiolitis/broncoespasmo': ['No',
-                                                         'Un único episodio de bronquiolitis',
+                                                         'Un unico episodio de bronquiolitis',
                                                          'Más de un episodio de bronquiolitis',
                                                          'Más de un episodio y ha precisado inahaladores',
                                                          'Más de un episodio y tiene tratamiento diario'],
@@ -121,7 +121,7 @@ def numerico (json, nodo_name): #Se introduce un json y el nombre de un nodo
         rspss.append(st.slider(
             pregunta, max_min_step[0], max_min_step[1], step = max_min_step[2]))
 
-    return crear_json('numerico', preg, rspss) #Esta función está definida más adelante
+    return crear_diccionario(preg, rspss) #Esta función está definida más adelante
 
 
 
@@ -138,7 +138,7 @@ def selectbox(json, nodo_name):
         rspss.append(st.selectbox(
             pregunta, list(preguntas_select.get(pregunta))))
 
-    return crear_json('selectbox', preg, rspss) #Esta función está definida más adelante
+    return crear_diccionario(preg, rspss) #Esta función está definida más adelante
 
 
 
@@ -154,18 +154,19 @@ def checkbox(json, nodo_name):
         preg.append(preguntas_check.get(pregunta))
         rspss.append(st.checkbox(pregunta))
 
-    return crear_json('checkbox', preg, rspss) #Esta función está definida más adelante
+    return crear_diccionario(preg, rspss) #Esta función está definida más adelante
 
 
 #FUNCIONES PARA JSON
 #Crear un objeto json con las respuestas
-def crear_json(nombre, lista_1, lista_2):
+def crear_diccionario(lista_1, lista_2):
     archivo = {}
-    archivo[nombre] = []
 
     #Se recorre la lista 1 y se introducen los datos según lista_1 : lista_2
     for i in range(len(lista_1)):
-        archivo[nombre].append({lista_1[i]:lista_2[i]})
+        dic = {lista_1[i]:lista_2[i]}
+        archivo.update(dic)
+    print(archivo)
     return(archivo)
 
 
@@ -173,16 +174,6 @@ def crear_json(nombre, lista_1, lista_2):
 def guardar_json (nombre_archivo, archivo_json):
     with open(nombre_archivo, 'w') as file:
         js.dump(archivo_json, file, indent=4)
-
-
-#Buscar resultado dentro de un json con estructura {[{}]}
-def buscar_resultado(doc_json, nombre_grupo, nombre_pregunta):
-    grupo = doc_json.get(nombre_grupo)
-    for x in grupo:
-        r = x.get(nombre_pregunta)
-        if r != None:
-            respuesta = r
-    return respuesta
 
 
 
@@ -210,27 +201,29 @@ def inicio(respuestas = [], protocolo_json=protocolo_json):
 def antecedente():
     st.write('Rellena tus antecedentes')
 
-    #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un json (ver funcion)
-    check = checkbox(antecedentes, 'primarios')
-    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un json (ver funcion)
-    select = selectbox(antecedentes, 'primarios')
+    antecedentes_dic = {}
 
-    #Se recoge como es la variable lactante del json y según eso se pregunta la edad en meses o en años
-    lactante = buscar_resultado(check, 'checkbox', 'lactante')
+    #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un diccionario (ver funcion)
+    antecedentes_dic.update(checkbox(antecedentes, 'primarios'))
+    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
+    antecedentes_dic.update(selectbox(antecedentes, 'primarios'))
+
+    #Se recoge como es la variable lactante del diccionario y según eso se pregunta la edad en meses o en años
+    lactante = antecedentes_dic.get('lactante')
     # Edad
     if lactante:
         edad = st.slider('Edad (Meses)', 0, 24)
     else:
         edad = st.slider('Edad (Años)', 2, 18)
 
-    #Se recoge como es la variable enfermedades del json y según eso se pregunta o no cuales son esas enfermedades
-    enfermedades_cronicas = buscar_resultado(check, 'checkbox', 'enfermedades')
+    #Se recoge como es la variable enfermedades del diccionario y según eso se pregunta o no cuales son esas enfermedades
+    enfermedades_cronicas = antecedentes_dic.get('enfermedades')
     que_enfermedades = ''
     if enfermedades_cronicas:
        que_enfermedades = st.text_input('Describe sus enfermedades')
 
-    #Se recoge como es la variable tto_base del json y según eso se pregunta o no cual es el tto
-    tto_base = buscar_resultado(check, 'checkbox', 'tto base')
+    #Se recoge como es la variable tto_base del diccionario y según eso se pregunta o no cual es el tto
+    tto_base = antecedentes_dic.get('tto base')
     que_tto_base = ''
     if tto_base:
         que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
@@ -238,16 +231,14 @@ def antecedente():
     #Texto libre para otros antecedentes
     otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
 
-    #Se crean dos listas con las nuevas preguntas y respuestas para crear un nuevo json
-    lista_items = ['edad', 'que enfermedades', 'que tto de base', 'otros antecedentes']
-    lista_respuestas = [edad, que_enfermedades, que_tto_base, otros_antecedentes]
-    otros = crear_json('otros', lista_items, lista_respuestas)
+    #Se crean un nuevo diccionaro con los nuevos datos y se añade a antedecentes
+    otros = {'edad': edad, 'que enfermedades': que_enfermedades, 'que tto base': que_tto_base,
+             'otros antecedentes': otros_antecedentes}
+    antecedentes_dic.update(otros)
 
-    #Se juntan todos los json generados (checkbox, selectbox y el resto)
-    antecedent = {**check, **select, **otros}
-    st.write(antecedent)
-    #Creamos un archivo json con el objeto json (ver funcion)
-    guardar_json('antecedentes', antecedent)
+    st.write(antecedentes_dic)
+    #Creamos un archivo json con el diccionario (ver funcion)
+    guardar_json('antecedentes respuestas', antecedentes_dic)
 
 
 
@@ -259,33 +250,29 @@ def formulario (nodo_name):
     sintoma_guia = formularios.get(nodo_name)
 
     #Los objetos json que recogen los resultados según el tipo de pregunta que sea (checkbox, selectbox o numerica)
-    check = {}
-    select = {}
-    numero = {}
+    sintomas_dic = {}
 
     # Según si es bool o numérico se hace una cosa u otra
     for tipo_pregunta in sintoma_guia.keys():
 
-        # Recogemos el tipo de pregunta y según el tipo usamos la función de muestra y recogida de datos correspondiente
-        tipo = sintoma_guia.get(tipo_pregunta)
-
         #Si tipo checkbox
         if (tipo_pregunta == 'checkbox'):
-            check = checkbox(formularios, nodo_name)
+            sintomas_dic.update(checkbox(formularios, nodo_name))
 
         # Si tipo selectbox
         elif (tipo_pregunta == 'selectbox'):
-            select = selectbox(formularios, nodo_name)
+            sintomas_dic.update(selectbox(formularios, nodo_name))
 
         # Si tipo numerico
         elif (tipo_pregunta == 'num'):
-            numero = numerico(formularios, nodo_name)
+            sintomas_dic.update(numerico(formularios, nodo_name))
 
     comentario = st.text_input('¿Quieres añadir más información?')
-    otros = crear_json('otros', ['mas informacion'], [comentario])
-    archivo = {**check, **select, **numero, **otros}
-    st.write(archivo)
-    guardar_json(nodo_name, archivo)
+    otros = {'otros': comentario}
+    sintomas_dic.update(otros)
+
+    st.write(sintomas_dic)
+    guardar_json(nodo_name + ' respuestas', sintomas_dic)
 
 
 
