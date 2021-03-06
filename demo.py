@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import json as js
 
 protocolo_json = {
     'start':{
@@ -158,7 +159,8 @@ def checkbox(json, nodo_name):
     return crear_json('checkbox', preg, rspss)
 
 
-#Crear un archivo json con las respuestas
+#FUNCIONES PARA JSON
+#Crear un objeto json con las respuestas
 def crear_json(nombre, lista_1, lista_2):
     archivo = {}
     archivo[nombre] = []
@@ -167,6 +169,12 @@ def crear_json(nombre, lista_1, lista_2):
         archivo[nombre].append({lista_1[i]:lista_2[i]})
     return(archivo)
 
+
+#Crea un archivo json con el objeto json introducido
+def guardar_json (nombre, archivo_json):
+    with open(nombre, 'w') as file:
+        js.dump(archivo_json, file, indent=4)
+        print('guardado')
 
 
 #Buscar resultado dentro de un json con estructura {[{}]}
@@ -232,6 +240,7 @@ def antecedente():
 
     res = {**check, **select, **otros}
     st.write(res)
+    guardar_json('antecedentes', res)
 
 
 
@@ -267,6 +276,7 @@ def formulario (nodo_name):
     comentario = st.text_input('¿Quieres añadir más información?')
     archivo = {**check, **select, **numero}
     st.write(archivo)
+    guardar_json(nodo_name, archivo)
 
 
 
