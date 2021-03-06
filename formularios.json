@@ -1,0 +1,53 @@
+{
+    "fiebre":{
+        "checkbox": {
+            "Diarrea": "Diarrea",
+            "Mocos y tos": "Mocos y tos"
+        },
+
+        "selectbox":{
+        "Dolor abdominal": ["no", "leve", "fuerte"],
+        "Vomitos": ["no", "si, menos de 2 al día", "si, más de dos al día"]
+        },
+
+        "num":{
+        "Tiempo de fiebre (horas)": [1,120,1],
+        "Temperatura maxima (ºC)": [35.0,42.0,0.1]
+        }
+
+    },
+
+
+    "masa cervical": {
+        "checkbox": {
+            "Es dolorosa": "dolor",
+            "Crece rápido": "crecimiento rapido",
+            "Es dura": "dura",
+            "Se mueve con facilidad": "no adherida",
+            "Se mueve al sacar la lengua o aguantar la respiracion": "desplaza con valsalva",
+            "Duele al masticar" : "dolor al comer",
+            "Tiene la boca seca": "sequedad de boca",
+            "Ha presentado lo mismo otras veces": "episodios previos",
+            "Fiebre": "fiebre",
+            "Ha perdido peso": "perdida de peso",
+            "Suda por las noches": "sudoracion nocturna",
+            "Dificultad para respirar": "disnea",
+            "Dolor al tragar": "odinofagia",
+            "Perdida de oido": "pérdida audicion",
+            "Está afonico": "afonia",
+            "Vómitos": "vómitos",
+            "Ojos salidos hacia fuera": "exoftalmos",
+            "Secreción por la nariz": "secrecion nasal",
+            "Madre con Enf. Graves": "AF de Graves"
+        },
+
+        "selectbox": {
+            "Localizacion": ["Angulo de la mandibula", "Zona media superior",
+                             "Zona media inferior", "Triángulo anterior",
+                             "Triángulo posterior", "Esternocleidomastoideo"],
+            "Ha recibido medicacion": ["No", "Si, Litio", "Si, anticolinergicos",
+                                       "Si, antihistaminicos", "Si, yoduros", "Si, amiodarona",
+                                       "Si, varios de los anteriores"]
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "primarios":{
+        "checkbox":{
+            "Fue prematuro": "prematuridad",
+            "Lactante (< 2 años)": "lactante",
+            "Tiene dermatitis atópica": "dermatitis atopica",
+            "El padre o la madre tuvieron o tienen asma o alergias": "AF atopia",
+            "Presenta alguna alergia": "alergias",
+            "Tiene el calendario vacunal al día o casi al día": "vacunas",
+            "Presenta una enfermedad crónica": "enfermedades",
+            "Tiene tratamiento de base": "tto base"
+
+        },
+        "selectbox":{
+            "Episodios de bronquiolitis/broncoespasmo": ["No",
+                                                         "Un unico episodio de bronquiolitis",
+                                                         "Más de un episodio de bronquiolitis",
+                                                         "Más de un episodio y ha precisado inahaladores",
+                                                         "Más de un episodio y tiene tratamiento diario"]
+        }
+    }
+}
+

@@ -2,106 +2,15 @@ import streamlit as st
 import pandas as pd
 import json as js
 
-protocolo_json = {
-    'start':{
-        'padre':"",
-        "tipo": "pregunta",
-        "pregunta": "¿Que te sucede?",
-        'respuestas': {
-            "Fiebre": "fiebre",
-            "Masa en el cuello": "masa cervical"
-        },
-    },
+#Cargo los json
+with open('protocolo_json.json') as file:
+    protocolo_json = js.load(file)
 
-    'fiebre': {
-        'padre': "start",
-        "tipo": "formulario"
-    },
+with open('antecedentes.json') as file:
+    antecedentes = js.load(file)
 
-    'masa cervical': {
-        'padre': "start",
-        "tipo": "formulario"
-    }
-
-}
-
-antecedentes = {
-    'primarios':{
-        'checkbox':{
-            'Fue prematuro': 'prematuridad',
-            'Lactante (< 2 años)': 'lactante',
-            'Tiene dermatitis atópica': 'dermatitis atopica',
-            'El padre o la madre tuvieron o tienen asma o alergias': 'AF atopia',
-            'Presenta alguna alergia': 'alergias',
-            'Tiene el calendario vacunal al día o casi al día': 'vacunas',
-            'Presenta una enfermedad crónica': 'enfermedades',
-            'Tiene tratamiento de base': 'tto base'
-
-        },
-        'selectbox':{
-            'Episodios de bronquiolitis/broncoespasmo': ['No',
-                                                         'Un unico episodio de bronquiolitis',
-                                                         'Más de un episodio de bronquiolitis',
-                                                         'Más de un episodio y ha precisado inahaladores',
-                                                         'Más de un episodio y tiene tratamiento diario'],
-        }
-    }
-}
-
-formularios = {
-    'fiebre':{
-        'checkbox': {
-            'Diarrea': 'Diarrea',
-            'Mocos y tos': 'Mocos y tos',
-        },
-
-        'selectbox':{
-        'Dolor abdominal': ['no', 'leve', 'fuerte'],
-        'Vomitos': ['no', 'si, menos de 2 al día', 'si, más de dos al día']
-        },
-
-        'num':{
-        'Tiempo de fiebre (horas)': [1,120,1],
-        'Temperatura maxima (ºC)': [35.0,42.0,0.1]
-        }
-
-    },
-
-
-    'masa cervical': {
-        'checkbox': {
-            'Es dolorosa': 'dolor',
-            'Crece rápido': 'crecimiento rapido',
-            'Es dura': 'dura',
-            'Se mueve con facilidad': 'no adherida',
-            'Se mueve al sacar la lengua o aguantar la respiracion': 'desplaza con valsalva',
-            'Duele al masticar' : 'dolor al comer',
-            'Tiene la boca seca': 'sequedad de boca',
-            'Ha presentado lo mismo otras veces': 'episodios previos',
-            'Fiebre': 'fiebre',
-            'Ha perdido peso': 'perdida de peso',
-            'Suda por las noches': 'sudoracion nocturna',
-            'Dificultad para respirar': 'disnea',
-            'Dolor al tragar': 'odinofagia',
-            'Perdida de oido': 'pérdida audicion',
-            'Está afonico': 'afonia',
-            'Vómitos': 'vómitos',
-            'Ojos salidos hacia fuera': 'exoftalmos',
-            'Secreción por la nariz': 'secrecion nasal',
-            'Madre con Enf. Graves': 'AF de Graves'
-        },
-
-        'selectbox': {
-            'Localizacion': ['Angulo de la mandibula', 'Zona media superior',
-                             'Zona media inferior', 'Triángulo anterior',
-                             'Triángulo posterior', 'Esternocleidomastoideo'],
-            'Ha recibido medicacion': ['No', 'Si, Litio', 'Si, anticolinergicos',
-                                       'Si, antihistaminicos', 'Si, yoduros', 'Si, amiodarona',
-                                       'Si, varios de los anteriores']
-        }
-    }
-}
-
+with open('formularios.json') as file:
+    formularios = js.load(file)
 
 
 
