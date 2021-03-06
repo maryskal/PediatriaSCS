@@ -75,13 +75,12 @@ def crear_diccionario(lista_1, lista_2):
     for i in range(len(lista_1)):
         dic = {lista_1[i]:lista_2[i]}
         archivo.update(dic)
-    print(archivo)
     return(archivo)
 
 
 #Crea un archivo json con el objeto json introducido
 def guardar_json (nombre_archivo, archivo_json):
-    with open(nombre_archivo, 'w') as file:
+    with open(nombre_archivo+'.json', 'w') as file:
         js.dump(archivo_json, file, indent=4)
 
 
