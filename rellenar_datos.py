@@ -36,7 +36,7 @@ def introducir_signos(signo):
         signos_check.update({a:b})
         st.write()
 
-    st.subheader('DESPLEGABLE')
+    st.sidebar.subheader('DESPLEGABLE')
     n_desplegable = st.number_input('Tipo desplegable',0)
     signos_desplegable = {}
     for i in range(n_desplegable):

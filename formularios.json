@@ -1,31 +1,42 @@
 {
-    "fiebre":{
+    "fiebre": {
         "checkbox": {
             "Diarrea": "Diarrea",
             "Mocos y tos": "Mocos y tos"
         },
-
-        "selectbox":{
-        "Dolor abdominal": ["no", "leve", "fuerte"],
-        "Vomitos": ["no", "si, menos de 2 al día", "si, más de dos al día"]
+        "selectbox": {
+            "Dolor abdominal": [
+                "no",
+                "leve",
+                "fuerte"
+            ],
+            "Vomitos": [
+                "no",
+                "si, menos de 2 al d\u00eda",
+                "si, m\u00e1s de dos al d\u00eda"
+            ]
         },
-
-        "num":{
-        "Tiempo de fiebre (horas)": [1,120,1],
-        "Temperatura maxima (ºC)": [35.0,42.0,0.1]
+        "num": {
+            "Tiempo de fiebre (horas)": [
+                1,
+                120,
+                1
+            ],
+            "Temperatura maxima (\u00baC)": [
+                35.0,
+                42.0,
+                0.1
+            ]
         }
-
     },
-
-
     "masa cervical": {
         "checkbox": {
             "Es dolorosa": "dolor",
-            "Crece rápido": "crecimiento rapido",
+            "Crece r\u00e1pido": "crecimiento rapido",
             "Es dura": "dura",
             "Se mueve con facilidad": "no adherida",
             "Se mueve al sacar la lengua o aguantar la respiracion": "desplaza con valsalva",
-            "Duele al masticar" : "dolor al comer",
+            "Duele al masticar": "dolor al comer",
             "Tiene la boca seca": "sequedad de boca",
             "Ha presentado lo mismo otras veces": "episodios previos",
             "Fiebre": "fiebre",
@@ -33,25 +44,35 @@
             "Suda por las noches": "sudoracion nocturna",
             "Dificultad para respirar": "disnea",
             "Dolor al tragar": "odinofagia",
-            "Perdida de oido": "pérdida audicion",
-            "Está afonico": "afonia",
-            "Vómitos": "vómitos",
+            "Perdida de oido": "p\u00e9rdida audicion",
+            "Est\u00e1 afonico": "afonia",
+            "V\u00f3mitos": "v\u00f3mitos",
             "Ojos salidos hacia fuera": "exoftalmos",
-            "Secreción por la nariz": "secrecion nasal",
+            "Secreci\u00f3n por la nariz": "secrecion nasal",
             "Madre con Enf. Graves": "AF de Graves"
         },
-
         "selectbox": {
-            "Localizacion": ["Angulo de la mandibula", "Zona media superior",
-                             "Zona media inferior", "Triángulo anterior",
-                             "Triángulo posterior", "Esternocleidomastoideo"],
-            "Ha recibido medicacion": ["No", "Si, Litio", "Si, anticolinergicos",
-                                       "Si, antihistaminicos", "Si, yoduros", "Si, amiodarona",
-                                       "Si, varios de los anteriores"]
+            "Localizacion": [
+                "Angulo de la mandibula",
+                "Zona media superior",
+                "Zona media inferior",
+                "Tri\u00e1ngulo anterior",
+                "Tri\u00e1ngulo posterior",
+                "Esternocleidomastoideo"
+            ],
+            "Ha recibido medicacion": [
+                "No",
+                "Si, Litio",
+                "Si, anticolinergicos",
+                "Si, antihistaminicos",
+                "Si, yoduros",
+                "Si, amiodarona",
+                "Si, varios de los anteriores"
+            ]
         }
     },
-    "antecedentes":{
-        "checkbox":{
+    "antecedentes": {
+        "checkbox": {
             "Fue prematuro": "prematuridad",
             "Lactante (< 24 meses)": "lactante",
             "Tiene dermatitis atopica": "dermatitis atopica",
@@ -60,16 +81,37 @@
             "Tiene el calendario vacunal al dia o casi al dia": "vacunas",
             "Presenta una enfermedad cronica": "enfermedades",
             "Tiene tratamiento de base": "tto base"
-
         },
-        "selectbox":{
-            "Episodios de bronquiolitis/broncoespasmo": ["No",
-                                                         "Un unico episodio de bronquiolitis",
-                                                         "Mas de un episodio de bronquiolitis",
-                                                         "Mas de un episodio y ha precisado inahaladores",
-                                                         "Mas de un episodio y tiene tratamiento diario"]
+        "selectbox": {
+            "Episodios de bronquiolitis/broncoespasmo": [
+                "No",
+                "Un unico episodio de bronquiolitis",
+                "Mas de un episodio de bronquiolitis",
+                "Mas de un episodio y ha precisado inahaladores",
+                "Mas de un episodio y tiene tratamiento diario"
+            ]
         }
+    },
+    "ohhi": {
+        "checkbox": {},
+        "selectbox": {
+            "": [
+                "",
+                "",
+                ""
+            ]
+        },
+        "num": {}
+    },
+    "adfads": {
+        "checkbox": {},
+        "selectbox": {
+            "": [
+                "",
+                "",
+                ""
+            ]
+        },
+        "num": {}
     }
 }
-
-
