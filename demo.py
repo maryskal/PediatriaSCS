@@ -1,6 +1,9 @@
 import streamlit as st
 import pandas as pd
 import json as js
+import copy
+import shutil
+import os
 
 #Cargo los json
 with open('protocolo_json.json') as file:
@@ -11,8 +14,8 @@ with open('formularios.json') as file:
 
 
 
-#FUNCIONES PARA LA RECOGIDA DE VALORES
-def numerico (json, nodo_name): #Se introduce un json y el nombre de un nodo
+# FUNCIONES PARA LA RECOGIDA DE VALORES
+def numerico (json, nodo_name): # Se introduce un json y el nombre de un nodo
     sintoma_guia = json.get(nodo_name)
     preguntas_numericas = sintoma_guia.get('num')
 
@@ -35,20 +38,20 @@ def selectbox(json, nodo_name):
     sintoma_guia = json.get(nodo_name)
     preguntas_select = sintoma_guia.get('selectbox')
 
-    rspss = list()
-    preg = list()
+    respuestas_al_formulario = list()
+    preguntas_del_formulario = list()
 
     # Recorro todas las preguntas
     for pregunta in preguntas_select.keys():
-        preg.append(pregunta)
-        rspss.append(st.selectbox(
+        preguntas_del_formulario.append(pregunta)
+        respuestas_al_formulario.append(st.selectbox(
             pregunta, list(preguntas_select.get(pregunta))))
 
-    return crear_diccionario(preg, rspss) #Esta función está definida más adelante
+    return crear_diccionario(preguntas_del_formulario, respuestas_al_formulario) #Esta función está definida más adelante
 
 
 
-def checkbox(json, nodo_name):
+def checkbox(json, nodo_name, default=None):
     sintoma_guia = json.get(nodo_name)
     preguntas_check = sintoma_guia.get('checkbox')
 
@@ -58,7 +61,11 @@ def checkbox(json, nodo_name):
     # Recorro todas las preguntas
     for pregunta in preguntas_check.keys():
         preg.append(preguntas_check.get(pregunta))
-        rspss.append(st.checkbox(pregunta))
+        if default is not None:
+            rspss.append(st.checkbox(pregunta, value=default.get(preguntas_check.get(pregunta))))
+        else:
+            rspss.append(st.checkbox(pregunta))
+
 
     return crear_diccionario(preg, rspss) #Esta función está definida más adelante
 
@@ -76,8 +83,8 @@ def crear_diccionario(lista_1, lista_2):
 
 
 #Crea un archivo json con el objeto json introducido
-def guardar_json (nombre_archivo, archivo_json):
-    with open(nombre_archivo+'.json', 'w') as file:
+def guardar_json (nombre_archivo, archivo_json, usuario):
+    with open("usuarios/" + usuario + "/" + nombre_archivo+'.json', 'w') as file:
         js.dump(archivo_json, file, indent=4)
 
 
@@ -85,31 +92,56 @@ def guardar_json (nombre_archivo, archivo_json):
 #FUNCIONES PRINCIPALES
 def inicio(respuestas = [], protocolo_json=protocolo_json):
     nodo = protocolo_json.get('start')
+    usuario = st.text_input('Introduce tu identificador')
+    if len(usuario) > 4:
+        crear_carpeta(usuario)
+        #ANTECEDENTES
+        st.title('ANTECEDENTES')
+        antecedente(usuario)
 
-    #ANTECEDENTES
-    st.title('ANTECEDENTES')
-    antecedente()
-
-    #SÍNTOMAS GUIA
-    st.write()
-    st.title('SÍNTOMA PRINCIPAL')
-    respuestas = respuestas + [st.selectbox(nodo.get("pregunta"), ['none'] + list(nodo.get("respuestas").keys()))]
-    if respuestas[len(respuestas) - 1] != 'none':
+        #SÍNTOMAS GUIA
         st.write()
-        formulario(nodo.get("respuestas").get(respuestas[len(respuestas) - 1]))
+        st.title('SÍNTOMA PRINCIPAL')
+        respuestas = respuestas + [st.selectbox(nodo.get("pregunta"), ['none'] + list(nodo.get("respuestas").keys()))]
+        if respuestas[len(respuestas) - 1] != 'none':
+            st.write()
+            formulario(nodo.get("respuestas").get(respuestas[len(respuestas) - 1]), usuario)
 
-    st.write('¿Quieres añadir una foto?')
-    #Añadir funcion de subir foto
+        if st.checkbox('¿Quieres añadir una foto?'):
+            upload_image(usuario, respuestas[len(respuestas) - 1], n_images=1)
+        #Añadir funcion de subir foto
 
 
+def crear_carpeta(usuario):
+    directorio = "./usuarios/" + str(usuario) + "/"
+    try:
+        os.stat(directorio)
+    except:
+        os.mkdir(directorio)
 
-def antecedente():
+
+def upload_image(usuario, sintoma, n_images):
+    imagenak_ = {}
+    for i in range(n_images):
+        img_name = sintoma + str(i) # aqui se puede poner para que eliga un nombre
+        imagenak_[img_name] = st.file_uploader(img_name)
+        if st.button('Save ' + img_name):
+            # crear_carpeta(jasotzeko_balorek[0])
+            im_to_save = copy.copy(imagenak_[img_name])
+            im_path = "./usuarios/" + usuario + "/" +  img_name + ".png"
+            with open(im_path, 'wb') as f:
+                shutil.copyfileobj(im_to_save, f, length=131072)
+
+
+def antecedente(usuario):
     st.write('Rellena tus antecedentes')
-
-    antecedentes_dic = {}
-
+    try:
+        with open("usuarios/" + usuario + '/antecedentes respuestas.json') as file:
+            antecedentes_dic = js.load(file)
+    except:
+        antecedentes_dic = {}
     #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(checkbox(formularios, 'antecedentes'))
+    antecedentes_dic.update(checkbox(formularios, 'antecedentes', antecedentes_dic))
     #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
     antecedentes_dic.update(selectbox(formularios, 'antecedentes'))
 
@@ -143,11 +175,11 @@ def antecedente():
 
     st.write(antecedentes_dic)
     #Creamos un archivo json con el diccionario (ver funcion)
-    guardar_json('antecedentes respuestas', antecedentes_dic)
+    guardar_json('antecedentes respuestas', antecedentes_dic, usuario)
 
 
 
-def formulario (nodo_name):
+def formulario (nodo_name, usuario):
     st.subheader('Responda a las siguientes cuestiones')
     st.write()
 
@@ -177,7 +209,7 @@ def formulario (nodo_name):
     sintomas_dic.update(otros)
 
     st.write(sintomas_dic)
-    guardar_json(nodo_name + ' respuestas', sintomas_dic)
+    guardar_json(nodo_name + ' respuestas', sintomas_dic, usuario)
 
 
 
