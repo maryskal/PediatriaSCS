@@ -1,4 +1,6 @@
-.idea
+.idea/*
+diagnosticos.py
+usuarios/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
