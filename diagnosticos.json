@@ -2,7 +2,7 @@
     "masa cervical": {
         "quiste tirogloso": {
             "sintomas": ["dolor", "crecimiento rapido"],
-            "obligatorios": ["fiebre"]
+            "obligatorios": ["fiebre", "zona media anterior"]
         },
         "adenopatia":{
             "sintomas": ["fiebre", "odinofagia"],

@@ -13,7 +13,6 @@ with open('formularios.json') as file:
     formularios = js.load(file)
 
 
-
 # FUNCIONES PARA LA RECOGIDA DE VALORES
 def numerico (json, nodo_name): # Se introduce un json y el nombre de un nodo
     sintoma_guia = json.get(nodo_name)
@@ -43,9 +42,26 @@ def selectbox(json, nodo_name):
 
     # Recorro todas las preguntas
     for pregunta in preguntas_select.keys():
-        preguntas_del_formulario.append(pregunta)
-        respuestas_al_formulario.append(st.selectbox(
-            pregunta, list(preguntas_select.get(pregunta))))
+        #Para que se añada cada respuesta posible del selectbox con True o False
+        respuestas_a_pregunta = list()
+        bool_respuestas_a_pregunta = list()
+
+        #Se guardan todas las opciones como false
+        for x in list(preguntas_select.get(pregunta)):
+            respuestas_a_pregunta.append(x)
+            bool_respuestas_a_pregunta.append(False)
+
+        #Se comprueba la respuesta seleciconada
+        respuesta_seleccionada=(st.selectbox(pregunta, list(preguntas_select.get(pregunta))))
+
+        #La respuesta seleccionada se cambia de False a True
+        for z in range(len(list(preguntas_select.get(pregunta)))):
+            if list(preguntas_select.get(pregunta))[z] == respuesta_seleccionada:
+                bool_respuestas_a_pregunta[z] = True
+
+        #Se añaden todas las opciones con su correspondiente valor (true o false) al formulario
+        preguntas_del_formulario = preguntas_del_formulario + respuestas_a_pregunta
+        respuestas_al_formulario = respuestas_al_formulario+ bool_respuestas_a_pregunta
 
     return crear_diccionario(preguntas_del_formulario, respuestas_al_formulario) #Esta función está definida más adelante
 
