@@ -112,4 +112,4 @@ def comprobar_diagnosticos(usuario, sintoma_principal):
     print(df)
 
 
-#comprobar_diagnosticos('paulag', 'masa cervical')
+comprobar_diagnosticos('franeko', 'masa cervical')

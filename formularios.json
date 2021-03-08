@@ -74,7 +74,6 @@
     "antecedentes": {
         "checkbox": {
             "Fue prematuro": "prematuridad",
-            "Lactante (< 24 meses)": "lactante",
             "Tiene dermatitis atopica": "dermatitis atopica",
             "El padre o la madre tuvieron o tienen asma o alergias": "AF atopia",
             "Presenta alguna alergia": "alergias",
@@ -83,6 +82,7 @@
             "Tiene tratamiento de base": "tto base"
         },
         "selectbox": {
+            "Sexo": ["Masculino", "Femenino"],
             "Episodios de bronquiolitis/broncoespasmo": [
                 "No",
                 "Un unico episodio de bronquiolitis",
@@ -90,28 +90,7 @@
                 "Mas de un episodio y ha precisado inahaladores",
                 "Mas de un episodio y tiene tratamiento diario"
             ]
+
         }
-    },
-    "ohhi": {
-        "checkbox": {},
-        "selectbox": {
-            "": [
-                "",
-                "",
-                ""
-            ]
-        },
-        "num": {}
-    },
-    "adfads": {
-        "checkbox": {},
-        "selectbox": {
-            "": [
-                "",
-                "",
-                ""
-            ]
-        },
-        "num": {}
     }
 }

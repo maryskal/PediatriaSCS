@@ -33,7 +33,7 @@ def numerico (json, nodo_name): # Se introduce un json y el nombre de un nodo
 
 
 
-def selectbox(json, nodo_name):
+def selectbox(json, nodo_name, default=None):
     sintoma_guia = json.get(nodo_name)
     preguntas_select = sintoma_guia.get('selectbox')
 
@@ -52,16 +52,29 @@ def selectbox(json, nodo_name):
             bool_respuestas_a_pregunta.append(False)
 
         #Se comprueba la respuesta seleciconada
-        respuesta_seleccionada=(st.selectbox(pregunta, list(preguntas_select.get(pregunta))))
+        if default is not None:
+            respuesta_seleccionada = default.get(pregunta)
+            #Miramos que indice es la respuesta seleccionada para dejarlo marcado predeterminado
+            for z in range(len(list(preguntas_select.get(pregunta)))):
+                if list(preguntas_select.get(pregunta))[z] == respuesta_seleccionada:
+                    index = z
+            respuesta_seleccionada=st.selectbox(pregunta, list(preguntas_select.get(pregunta)), z)
+
+        else:
+            respuesta_seleccionada=st.selectbox(pregunta, list(preguntas_select.get(pregunta)))
 
         #La respuesta seleccionada se cambia de False a True
         for z in range(len(list(preguntas_select.get(pregunta)))):
             if list(preguntas_select.get(pregunta))[z] == respuesta_seleccionada:
                 bool_respuestas_a_pregunta[z] = True
 
+        #Se guarda tb como antes
+        preguntas_del_formulario.append(pregunta)
+        respuestas_al_formulario.append(respuesta_seleccionada)
+
         #Se añaden todas las opciones con su correspondiente valor (true o false) al formulario
         preguntas_del_formulario = preguntas_del_formulario + respuestas_a_pregunta
-        respuestas_al_formulario = respuestas_al_formulario+ bool_respuestas_a_pregunta
+        respuestas_al_formulario = respuestas_al_formulario + bool_respuestas_a_pregunta
 
     return crear_diccionario(preguntas_del_formulario, respuestas_al_formulario) #Esta función está definida más adelante
 
@@ -156,37 +169,45 @@ def antecedente(usuario):
             antecedentes_dic = js.load(file)
     except:
         antecedentes_dic = {}
+
     #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un diccionario (ver funcion)
     antecedentes_dic.update(checkbox(formularios, 'antecedentes', antecedentes_dic))
-    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(selectbox(formularios, 'antecedentes'))
-
-    #Se recoge como es la variable lactante del diccionario y según eso se pregunta la edad en meses o en años
-    lactante = antecedentes_dic.get('lactante')
-    # Edad
-    if lactante:
-        edad = st.slider('Edad (Meses)', 0, 24)
+    if antecedentes_dic is not None:
+        fecha_nacimiento = st.text_input('Fecha nacimiento:', antecedentes_dic.get('Fecha nacimiento'))
     else:
-        edad = st.slider('Edad (Años)', 2, 18)
+        fecha_nacimiento = st.text_input('Fecha nacimiento:')
+
+    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
+    antecedentes_dic.update(selectbox(formularios, 'antecedentes', antecedentes_dic))
 
     #Se recoge como es la variable enfermedades del diccionario y según eso se pregunta o no cuales son esas enfermedades
     enfermedades_cronicas = antecedentes_dic.get('enfermedades')
     que_enfermedades = ''
     if enfermedades_cronicas:
-       que_enfermedades = st.text_input('Describe sus enfermedades')
+        if antecedentes_dic is not None:
+            que_enfermedades = st.text_input('Describe sus enfermedades', antecedentes_dic.get('Describe sus enfermedades'))
+        else:
+            que_enfermedades = st.text_input('Describe sus enfermedades')
 
     #Se recoge como es la variable tto_base del diccionario y según eso se pregunta o no cual es el tto
     tto_base = antecedentes_dic.get('tto base')
     que_tto_base = ''
     if tto_base:
-        que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
+        if antecedentes_dic is not None:
+            que_tto_base = st.text_input('¿Que tratamiento de base tiene?', antecedentes_dic.get('¿Que tratamiento de base tiene?'))
+        else:
+            que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
 
     #Texto libre para otros antecedentes
-    otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
+    if antecedentes_dic is not None:
+        otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario',
+                                     antecedentes_dic.get('Rellena otros datos de interés si lo crees necesario'))
+    else:
+        otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
 
     #Se crean un nuevo diccionaro con los nuevos datos y se añade a antedecentes
-    otros = {'edad': edad, 'que enfermedades': que_enfermedades, 'que tto base': que_tto_base,
-             'otros antecedentes': otros_antecedentes}
+    otros = {'Fecha nacimiento': fecha_nacimiento, 'Describe sus enfermedades': que_enfermedades, '¿Que tratamiento de base tiene?': que_tto_base,
+             'Rellena otros datos de interés si lo crees necesario': otros_antecedentes}
     antecedentes_dic.update(otros)
 
     st.write(antecedentes_dic)
@@ -224,7 +245,7 @@ def formulario (nodo_name, usuario):
     otros = {'otros': comentario}
     sintomas_dic.update(otros)
 
-    st.write(sintomas_dic)
+    #st.write(sintomas_dic)
     guardar_json(nodo_name + ' respuestas', sintomas_dic, usuario)
 
 
