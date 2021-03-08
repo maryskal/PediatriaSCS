@@ -5,6 +5,7 @@ import copy
 import shutil
 import os
 
+
 #Cargo los json
 with open('protocolo_json.json') as file:
     protocolo_json = js.load(file)
@@ -58,7 +59,7 @@ def selectbox(json, nodo_name, default=None):
             for z in range(len(list(preguntas_select.get(pregunta)))):
                 if list(preguntas_select.get(pregunta))[z] == respuesta_seleccionada:
                     index = z
-            respuesta_seleccionada=st.selectbox(pregunta, list(preguntas_select.get(pregunta)), z)
+            respuesta_seleccionada = st.selectbox(pregunta, list(preguntas_select.get(pregunta)), index)
 
         else:
             respuesta_seleccionada=st.selectbox(pregunta, list(preguntas_select.get(pregunta)))
@@ -162,7 +163,9 @@ def upload_image(usuario, sintoma, n_images):
                 shutil.copyfileobj(im_to_save, f, length=131072)
 
 
+
 def antecedente(usuario):
+    antecedentes_dic = {}
     st.write('Rellena tus antecedentes')
     try:
         with open("usuarios/" + usuario + '/antecedentes respuestas.json') as file:
