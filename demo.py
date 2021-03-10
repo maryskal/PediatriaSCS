@@ -163,59 +163,143 @@ def upload_image(usuario, sintoma, n_images):
                 shutil.copyfileobj(im_to_save, f, length=131072)
 
 
+antecedentes_dic_default = {
+    "prematuridad":{
+        "pregunta":"Fue prematuro",
+        "tipo_pregunta":"checkbox",
+        "valor": False
+    },
+    "dermatitis_atopica": {
+        "pregunta": "Tiene dermatitis atopica",
+        "tipo_pregunta": "checkbox",
+        "valor": False
+    },
+    "AF_atopia": {
+        "pregunta": "El padre o la madre tuvieron o tienen asma o alergias",
+        "tipo_pregunta": "checkbox",
+        "valor": False
+    },
+    "alergias": {
+        "pregunta": "Presenta alguna alergia",
+        "tipo_pregunta": "checkbox",
+        "valor": False
+    },
+    "vacunas": {
+        "pregunta": "Tiene el calendario vacunal al dia o casi al dia",
+        "tipo_pregunta": "checkbox",
+        "valor": False
+    },
+    "enfermedades": {
+        "pregunta": "Presenta una enfermedad cronica",
+        "tipo_pregunta": "checkbox_con_pregunta",
+        "valor": False,
+        "segunda_pregunta":'Describe sus enfermedades',
+        "segunda_pregunta_respuesta":""
+    },
+    "tto_base": {
+        "pregunta": "¿Tiene tratamiento de base?",
+        "tipo_pregunta": "checkbox_con_pregunta",
+        "valor": False,
+        "segunda_pregunta": '¿Que tratamiento de base tiene?',
+        "segunda_pregunta_respuesta":""
+
+    },
+    "sexo": {
+        "pregunta": "Sexo",
+        "tipo_pregunta": "selectbox",
+        "options": ["-", "Masculino", "Femenino"],
+        "valor": "-"
+    },
+    "bronquiolitis": {
+        "pregunta": "Episodios de bronquiolitis/broncoespasmo",
+        "tipo_pregunta": "selectbox",
+        "options": [
+            "-",
+            "No",
+            "Un unico episodio de bronquiolitis",
+            "Mas de un episodio de bronquiolitis",
+            "Mas de un episodio y ha precisado inahaladores",
+            "Mas de un episodio y tiene tratamiento diario"
+        ],
+        "valor": "-"
+    },
+    "fecha_nacimiento": {
+        "pregunta": "Fecha nacimiento",
+        "tipo_pregunta": "date",
+        "valor": None
+    },
+    "texto_libre": {
+        "pregunta": 'Rellena otros datos de interés si lo crees necesario',
+        "tipo_pregunta": "texto_libre",
+        "valor": ""
+    },
+    "foto": {
+        "pregunta": 'Suba alguna foto si quieres enseñar algo que hayas explicado en el texto libre.',
+        "tipo_pregunta": "foto",
+        "valor": None
+    }
+}
+
+
+def get_index(vec, val):
+    for i in range(len(vec)):
+        if vec[i] == val:
+            return i
+
+def sidebar_antecedentes(caracteristicas):
+    st.write(caracteristicas)
+    pregunta = caracteristicas.get('pregunta')
+    tipo_pregunta = caracteristicas.get('tipo_pregunta')
+    valor = caracteristicas.get('valor')
+    st.write(pregunta)
+    st.write(tipo_pregunta)
+    st.write(valor)
+
+    if tipo_pregunta in ["checkbox", "checkbox_con_pregunta"]:
+        return st.sidebar.checkbox(
+            pregunta,
+            valor
+        )
+    elif tipo_pregunta == "selectbox":
+        return st.sidebar.selectbox(
+            pregunta,
+            caracteristicas.get('options'),
+            get_index(caracteristicas.get('options'), valor)
+        )
+    elif tipo_pregunta == "date":
+        return st.sidebar.date_input(
+            pregunta,
+            valor
+        )
+    elif tipo_pregunta == "texto_libre":
+        return st.sidebar.text_input(
+            pregunta,
+            valor
+        )
+    elif tipo_pregunta == "foto":
+        pass
+
 
 def antecedente(usuario):
-    antecedentes_dic = {}
-    st.write('Rellena tus antecedentes')
+    st.sidebar.title('ANTECEDENTES')
+    st.sidebar.write('Rellena tus antecedentes')
     try:
-        with open("usuarios/" + usuario + '/antecedentes respuestas.json') as file:
+        with open("usuarios/" + usuario + '/antecedentes_respuestas.json') as file:
             antecedentes_dic = js.load(file)
     except:
-        antecedentes_dic = {}
-
-    #Con esto se muestran todas las preguntas tipo checkbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(checkbox(formularios, 'antecedentes', antecedentes_dic))
-    if antecedentes_dic is not None:
-        fecha_nacimiento = st.text_input('Fecha nacimiento:', antecedentes_dic.get('Fecha nacimiento'))
-    else:
-        fecha_nacimiento = st.text_input('Fecha nacimiento:')
-
-    #Con esto se muestran todas las preguntas tipo selectbox y se devuelve un diccionario (ver funcion)
-    antecedentes_dic.update(selectbox(formularios, 'antecedentes', antecedentes_dic))
-
-    #Se recoge como es la variable enfermedades del diccionario y según eso se pregunta o no cuales son esas enfermedades
-    enfermedades_cronicas = antecedentes_dic.get('enfermedades')
-    que_enfermedades = ''
-    if enfermedades_cronicas:
-        if antecedentes_dic is not None:
-            que_enfermedades = st.text_input('Describe sus enfermedades', antecedentes_dic.get('Describe sus enfermedades'))
-        else:
-            que_enfermedades = st.text_input('Describe sus enfermedades')
-
-    #Se recoge como es la variable tto_base del diccionario y según eso se pregunta o no cual es el tto
-    tto_base = antecedentes_dic.get('tto base')
-    que_tto_base = ''
-    if tto_base:
-        if antecedentes_dic is not None:
-            que_tto_base = st.text_input('¿Que tratamiento de base tiene?', antecedentes_dic.get('¿Que tratamiento de base tiene?'))
-        else:
-            que_tto_base = st.text_input('¿Que tratamiento de base tiene?')
-
-    #Texto libre para otros antecedentes
-    if antecedentes_dic is not None:
-        otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario',
-                                     antecedentes_dic.get('Rellena otros datos de interés si lo crees necesario'))
-    else:
-        otros_antecedentes = st.text_input('Rellena otros datos de interés si lo crees necesario')
-
-    #Se crean un nuevo diccionaro con los nuevos datos y se añade a antedecentes
-    otros = {'Fecha nacimiento': fecha_nacimiento, 'Describe sus enfermedades': que_enfermedades, '¿Que tratamiento de base tiene?': que_tto_base,
-             'Rellena otros datos de interés si lo crees necesario': otros_antecedentes}
-    antecedentes_dic.update(otros)
+        antecedentes_dic = antecedentes_dic_default
+    for pregunta in antecedentes_dic.keys():
+        antecedentes_dic[pregunta]['valor'] = sidebar_antecedentes(antecedentes_dic.get(pregunta))
+        if antecedentes_dic.get(pregunta).get("tipo_pregunta") == "checkbox_con_pregunta":
+            if antecedentes_dic[pregunta]['valor']:
+                antecedentes_dic[pregunta]["segunda_pregunta_respuesta"] = st.sidebar.text_input(
+                    antecedentes_dic.get(pregunta).get('segunda_pregunta'),
+                    antecedentes_dic.get(pregunta).get('segunda_pregunta_respuesta')
+                )
 
     st.write(antecedentes_dic)
     #Creamos un archivo json con el diccionario (ver funcion)
-    guardar_json('antecedentes respuestas', antecedentes_dic, usuario)
+    guardar_json('antecedentes_respuestas', antecedentes_dic, usuario)
 
 
 
