@@ -1,0 +1,96 @@
+{
+    "fiebre": {
+        "checkbox": {
+            "Diarrea": "Diarrea",
+            "Mocos y tos": "Mocos y tos"
+        },
+        "selectbox": {
+            "Dolor abdominal": [
+                "no",
+                "leve",
+                "fuerte"
+            ],
+            "Vomitos": [
+                "no",
+                "si, menos de 2 al d\u00eda",
+                "si, m\u00e1s de dos al d\u00eda"
+            ]
+        },
+        "num": {
+            "Tiempo de fiebre (horas)": [
+                1,
+                120,
+                1
+            ],
+            "Temperatura maxima (\u00baC)": [
+                35.0,
+                42.0,
+                0.1
+            ]
+        }
+    },
+    "masa cervical": {
+        "checkbox": {
+            "Es dolorosa": "dolor",
+            "Crece r\u00e1pido": "crecimiento rapido",
+            "Es dura": "dura",
+            "Se mueve con facilidad": "no adherida",
+            "Se mueve al sacar la lengua o aguantar la respiracion": "desplaza con valsalva",
+            "Duele al masticar": "dolor al comer",
+            "Tiene la boca seca": "sequedad de boca",
+            "Ha presentado lo mismo otras veces": "episodios previos",
+            "Fiebre": "fiebre",
+            "Ha perdido peso": "perdida de peso",
+            "Suda por las noches": "sudoracion nocturna",
+            "Dificultad para respirar": "disnea",
+            "Dolor al tragar": "odinofagia",
+            "Perdida de oido": "p\u00e9rdida audicion",
+            "Est\u00e1 afonico": "afonia",
+            "V\u00f3mitos": "v\u00f3mitos",
+            "Ojos salidos hacia fuera": "exoftalmos",
+            "Secreci\u00f3n por la nariz": "secrecion nasal",
+            "Madre con Enf. Graves": "AF de Graves"
+        },
+        "selectbox": {
+            "Localizacion": [
+                "Angulo de la mandibula",
+                "Zona media superior",
+                "Zona media inferior",
+                "Trianngulo anterior",
+                "Triangulo posterior",
+                "Esternocleidomastoideo"
+            ],
+            "Ha recibido medicacion": [
+                "No ha recibido medicacion",
+                "Si, Litio",
+                "Si, anticolinergicos",
+                "Si, antihistaminicos",
+                "Si, yoduros",
+                "Si, amiodarona",
+                "Si, varios de los anteriores"
+            ]
+        }
+    },
+    "antecedentes": {
+        "checkbox": {
+            "Fue prematuro": "prematuridad",
+            "Tiene dermatitis atopica": "dermatitis atopica",
+            "El padre o la madre tuvieron o tienen asma o alergias": "AF atopia",
+            "Presenta alguna alergia": "alergias",
+            "Tiene el calendario vacunal al dia o casi al dia": "vacunas",
+            "Presenta una enfermedad cronica": "enfermedades",
+            "Tiene tratamiento de base": "tto base"
+        },
+        "selectbox": {
+            "Sexo": ["Masculino", "Femenino"],
+            "Episodios de bronquiolitis/broncoespasmo": [
+                "No",
+                "Un unico episodio de bronquiolitis",
+                "Mas de un episodio de bronquiolitis",
+                "Mas de un episodio y ha precisado inahaladores",
+                "Mas de un episodio y tiene tratamiento diario"
+            ]
+
+        }
+    }
+}

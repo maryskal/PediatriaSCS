@@ -1,0 +1,23 @@
+{
+    "start":{
+        "padre":"",
+        "tipo": "pregunta",
+        "pregunta": "¿Que te sucede?",
+        "respuestas": {
+            "Fiebre": "fiebre",
+            "Masa en el cuello": "masa cervical"
+        }
+    },
+
+    "fiebre": {
+        "padre": "start",
+        "tipo": "formulario"
+    },
+
+    "masa cervical": {
+        "padre": "start",
+        "tipo": "formulario"
+    }
+
+}
+
